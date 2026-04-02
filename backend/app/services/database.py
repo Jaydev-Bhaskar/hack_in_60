@@ -66,3 +66,20 @@ async def seed_stations(stations_list: list) -> int:
         result = await stations_col.insert_many(stations_list)
         return len(result.inserted_ids)
     return 0
+
+async def add_station(station_data: dict) -> str:
+    """Admin function: Add a new station"""
+    from datetime import datetime, timezone
+    station_data["last_updated"] = datetime.now(timezone.utc).isoformat()
+    station_data["update_history"] = []
+    # Use the custom _id if provided, else rely on mongodb
+    if "id" in station_data:
+        station_data["_id"] = station_data.pop("id")
+        
+    result = await stations_col.insert_one(station_data)
+    return str(result.inserted_id)
+
+async def delete_station(station_id: str) -> bool:
+    """Admin function: Delete a station"""
+    result = await stations_col.delete_one({"_id": station_id})
+    return result.deleted_count > 0

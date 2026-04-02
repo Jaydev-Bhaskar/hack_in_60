@@ -15,6 +15,11 @@ class StationBase(BaseModel):
     estimated_wait: int     # minutes
 
 
+class StationCreate(StationBase):
+    """Schema for creating a new station."""
+    _id: str
+
+
 class UpdateStatusRequest(BaseModel):
     """Request body for updating a station's status."""
     station_id: str
